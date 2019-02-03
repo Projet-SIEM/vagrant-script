@@ -10,7 +10,12 @@ git config --global alias.up '!git remote update -p; git merge --ff-only @{u}'
 
 # Check if logcheck is not installed
 if ! logcheck="$(type -p logcheck)" || [[ -z $logcheck ]]; then
-  apt-get install logcheck -y
+  apt install logcheck -y
+fi
+
+# Check if java is not installed
+if ! java="$(type -p java)" || [[ -z $java ]]; then
+  apt install default-jdk -y
 fi
 
 # Clone Malilog if needed
