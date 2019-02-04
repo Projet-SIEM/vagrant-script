@@ -26,4 +26,8 @@ fi
 cd Malilog
 # Update Malilog if needed
 git checkout master && git up;
-cd .. && ls
+
+# launch log generation
+java -jar malilog.jar -nb 20
+
+cp Logs/logs.log /vagrant
