@@ -28,6 +28,9 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 993, host: 993  # IMAP4 over SSL
   config.vm.network "forwarded_port", guest: 995, host: 995  # Secure POP3 (SSL-POP)
 
+  # Dashboard specific port forwarding
+  config.vm.network "forwarded_port", guest: 3000,  host: 3000   # Dashboard
+  config.vm.network "forwarded_port", guest: 8086, host: 8086  # Dashboard database
 
 
   # Create a forwarded port mapping which allows access to a specific port
