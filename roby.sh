@@ -1,8 +1,19 @@
 #!/bin/bash
 
+# check if the virtualbox guest addition is install
+if ! [ -a ./vbox ]; then
+  sudo su
+  echo deb http://ftp.debian.org/debian stretch-backports main contrib > /etc/apt/sources.list.d/stretch-backports.list
+  apt update
+  apt install virtualbox-guest-dkms virtualbox-guest-x11 linux-headers-$(uname -r)
+  echo "The virtualbox guest addition is no installed, please reload the vm"
+  touch vbox
+  exit 1
+fi
+
 # Check if git is not installed
 if  ! git="$(type -p git)" || [[ -z $git ]]; then
-  apt-get install git -y
+  apt install git -y
 fi
 
 # add usefull git alias
