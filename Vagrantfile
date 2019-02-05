@@ -19,11 +19,16 @@ Vagrant.configure("2") do |config|
   # `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
 
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # NOTE: This will enable public access to the opened port
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  # email port forwarding
+  config.vm.network "forwarded_port", guest: 25,  host: 25   # SMTP
+  config.vm.network "forwarded_port", guest: 110, host: 110  # POP3
+  config.vm.network "forwarded_port", guest: 143, host: 143  # IMAP
+  config.vm.network "forwarded_port", guest: 465, host: 465  # Secure SMTP (SSMTP)
+  config.vm.network "forwarded_port", guest: 585, host: 585  # Secure IMAP (IMAP4-SSL)
+  config.vm.network "forwarded_port", guest: 993, host: 993  # IMAP4 over SSL
+  config.vm.network "forwarded_port", guest: 995, host: 995  # Secure POP3 (SSL-POP)
+
+
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
