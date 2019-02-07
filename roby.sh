@@ -5,8 +5,8 @@ if ! [ -a ./vbox ]; then
   sudo su
   echo deb http://ftp.debian.org/debian stretch-backports main contrib > /etc/apt/sources.list.d/stretch-backports.list
   apt update
-  apt install virtualbox-guest-dkms virtualbox-guest-x11 linux-headers-$(uname -r)
-  echo "The virtualbox guest addition is no installed, please reload the vm"
+  apt install virtualbox-guest-dkms virtualbox-guest-x11 linux-headers-$(uname -r) -y
+  echo "The virtualbox guest addition is now installed, please reload the vm"
   touch vbox
   exit 1
 fi
@@ -34,6 +34,11 @@ if [ ! -d "Malilog" ]; then
   git clone https://github.com/Projet-SIEM/Malilog.git
 fi
 
+# Clone logcheck configurator if needed
+if [ ! -d "logcheck" ]; then
+  git clone https://github.com/Projet-SIEM/logcheck.git
+fi
+
 cd Malilog
 # Update Malilog if needed
 git checkout master && git up;
@@ -41,4 +46,19 @@ git checkout master && git up;
 # launch log generation
 java -jar malilog.jar -nb 20
 
-cp Logs/logs.log /vagrant
+# config logcheck
+cd ../logcheck
+
+# update logcheck configuration script if needed
+git checkout master && git up
+
+# conf logcheck
+sudo ./conf.sh
+
+# conf logcheck rules
+#./rules.sh
+# clean rules
+sudo rm /etc/logcheck/ignore.d.server/local-rule
+sudo echo "\[[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}:[0-9]{2}\]\s[a-z,A-Z]*\s[a-z,A-Z]*\s+([0-9]{1,3}\.){3}[0-9]{1,3}\s+([0-9]{1,3}\.){3}[0-9]{1,3}\s+[0-9]{1,5}\s[0-9]{1,5}\sConnection to server" >> /etc/logcheck/ignore.d.server/local-rule
+
+cd .. && cp ./Malilog/Logs/logs.log /vagrant
