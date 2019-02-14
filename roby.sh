@@ -1,15 +1,10 @@
 #!/bin/bash
 
-# check if the virtualbox guest addition is install
-if ! [ -a ./vbox ]; then
-  sudo su
-  echo deb http://ftp.debian.org/debian stretch-backports main contrib > /etc/apt/sources.list.d/stretch-backports.list
-  apt update
-  apt install virtualbox-guest-dkms virtualbox-guest-x11 linux-headers-$(uname -r) -y
-  echo "The virtualbox guest addition is now installed, please reload the vm"
-  touch vbox
-  exit 1
-fi
+# fix issue
+export LANGUAGE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_TYPE=en_US.UTF-8
 
 # Check if git is not installed
 if  ! git="$(type -p git)" || [[ -z $git ]]; then
@@ -56,9 +51,13 @@ git checkout master && git up
 sudo ./conf.sh
 
 # conf logcheck rules
-#./rules.sh
 # clean rules
-sudo rm /etc/logcheck/ignore.d.server/local-rule
-sudo echo "\[[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}:[0-9]{2}\]\s[a-z,A-Z]*\s[a-z,A-Z]*\s+([0-9]{1,3}\.){3}[0-9]{1,3}\s+([0-9]{1,3}\.){3}[0-9]{1,3}\s+[0-9]{1,5}\s[0-9]{1,5}\sConnection to server" >> /etc/logcheck/ignore.d.server/local-rule
+sudo rm /etc/logcheck/cracking.d/local-rule
 
-cd .. && cp ./Malilog/Logs/logs.log /vagrant
+# add rules
+sudo cp /vagrant/rules.txt /etc/logcheck/cracking.d/local-rule
+
+# logcheck run
+echo "Run logcheck" && sudo -u logcheck logcheck
+echo "logcheck finish, fetch logs"
+cd .. && cp ./Malilog/Malilog/Logs/logs.log /vagrant
