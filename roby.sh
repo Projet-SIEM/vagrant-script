@@ -34,12 +34,31 @@ if [ ! -d "logcheck" ]; then
   git clone https://github.com/Projet-SIEM/logcheck.git
 fi
 
+if [ ! -d "grafana-dashboard" ]; then
+  git clone https://github.com/Projet-SIEM/grafana-dashboard.git
+fi
+
+cd grafana-dashboard
+git checkout master && git up;
+
+if [ ! "grafana" ]; then
+  sudo ./grafana_install.sh
+  touch grafana
+fi
+cd ..
+
 cd Malilog
 # Update Malilog if needed
 git checkout master && git up;
 
 # launch log generation
 java -jar malilog.jar -nb 20
+
+if [ ! -d "Logs/logs.log" ]; then
+
+  cd ../grafana-dashboard
+  python3 log_to_bdd.py ../Malilog/Logs/logs.log
+fi
 
 # config logcheck
 cd ../logcheck
@@ -56,6 +75,11 @@ sudo rm /etc/logcheck/cracking.d/local-rule
 
 # add rules
 sudo cp /vagrant/rules.txt /etc/logcheck/cracking.d/local-rule
+
+# run logcheck for the dashboard
+sudo -u logcheck logcheck -t -o > /tmp/logcheck-report.txt
+
+python3 /home/vagrant/grafana-dashboard/alert_to_bdd.py /tmp/logcheck-report.txt
 
 # logcheck run
 echo "Run logcheck" && sudo -u logcheck logcheck
