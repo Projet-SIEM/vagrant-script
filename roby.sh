@@ -60,4 +60,4 @@ sudo cp /vagrant/rules.txt /etc/logcheck/cracking.d/local-rule
 # logcheck run
 echo "Run logcheck" && sudo -u logcheck logcheck
 echo "logcheck finish, fetch logs"
-cd .. && cp ./Malilog/Malilog/Logs/logs.log /vagrant
+cd .. && cp ./Malilog/Logs/logs.log /vagrant
