@@ -61,7 +61,7 @@ echo "Update Malilog : "
 git checkout master && git up;
 
 # launch log generation
-if [ -z "$1" ]; then
+if [ ! $# -eq 0 ]; then
   java -jar malilog.jar -nb $1
 else
   java -jar malilog.jar -nb 10
