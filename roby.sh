@@ -8,6 +8,7 @@ export LC_TYPE=en_US.UTF-8
 
 # Check if git is not installed
 if  ! git="$(type -p git)" || [[ -z $git ]]; then
+  echo "Git install : "
   apt install git -y
 fi
 
@@ -16,46 +17,54 @@ git config --global alias.up '!git remote update -p; git merge --ff-only @{u}'
 
 # Check if logcheck is not installed
 if ! logcheck="$(type -p logcheck)" || [[ -z $logcheck ]]; then
+  echo "logcheck install : "
   apt install logcheck -y
 fi
 
 # Check if java is not installed
 if ! java="$(type -p java)" || [[ -z $java ]]; then
+  echo "Java install : "
   apt install default-jdk -y
 fi
 
 # Clone Malilog if needed
 if [ ! -d "Malilog" ]; then
+  echo "Cloning Malilog : "
   git clone https://github.com/Projet-SIEM/Malilog.git
 fi
 
 # Clone logcheck configurator if needed
 if [ ! -d "logcheck" ]; then
+  echo "Cloning logcheck config script : "
   git clone https://github.com/Projet-SIEM/logcheck.git
 fi
 
 if [ ! -d "grafana-dashboard" ]; then
+  echo "Cloning dashboard : "
   git clone https://github.com/Projet-SIEM/grafana-dashboard.git
 fi
 
 cd grafana-dashboard
 git checkout master && git up;
 
-if [ ! "grafana" ]; then
+if [ ! -f "grafana" ]; then
+  echo "Install grafana dashboard : "
   sudo ./grafana_install.sh
   touch grafana
 fi
+echo "Grafana already install"
 cd ..
 
 cd Malilog
 # Update Malilog if needed
+echo "Update Malilog : "
 git checkout master && git up;
 
 # launch log generation
 java -jar malilog.jar -nb 20
 
 if [ ! -d "Logs/logs.log" ]; then
-
+  echo "Add log to the dashboard : "
   cd ../grafana-dashboard
   python3 log_to_bdd.py ../Malilog/Logs/logs.log
 fi
@@ -67,18 +76,18 @@ cd ../logcheck
 git checkout master && git up
 
 # conf logcheck
+echo "config logcheck : "
 sudo ./conf.sh
 
 # conf logcheck rules
-# clean rules
+echo "clean rules : "
 sudo rm /etc/logcheck/cracking.d/local-rule
 
-# add rules
+echo "add rules : "
 sudo cp /vagrant/rules.txt /etc/logcheck/cracking.d/local-rule
 
-# run logcheck for the dashboard
+echo "Run logcheck for the dashboard : "
 sudo -u logcheck logcheck -t -o > /tmp/logcheck-report.txt
-
 python3 /home/vagrant/grafana-dashboard/alert_to_bdd.py /tmp/logcheck-report.txt
 
 # logcheck run
