@@ -1,6 +1,21 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require "getoptlong"
+
+opts = GetoptLong.new(
+  [ '--nbr-log', GetoptLong::OPTIONAL_ARGUMENT ]
+)
+
+customParameter=''
+
+opts.each do |opt, arg|
+  case opt
+  when '--nbr-log'
+      customParameter=arg
+  end
+end
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -28,5 +43,9 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   config.vm.provider "virtualbox"
 
-  config.vm.provision "shell", path: "roby.sh", keep_color: true
+  config.vm.provision :shell do |s|
+     s.path = "roby.sh"
+     s.keep_color = true
+     s.args = "#{customParameter}"
+  end
 end

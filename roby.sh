@@ -61,7 +61,7 @@ echo "Update Malilog : "
 git checkout master && git up;
 
 # launch log generation
-java -jar malilog.jar -nb 20
+java -jar malilog.jar -nb $1
 
 if [ ! -d "Logs/logs.log" ]; then
   echo "Add log to the dashboard : "

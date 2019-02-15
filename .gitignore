@@ -1,3 +1,4 @@
 .vagrant
 logs.log
 *.box
+rules.txt
