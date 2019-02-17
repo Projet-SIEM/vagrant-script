@@ -62,7 +62,8 @@ def main():
     +addresse_ip(tabIPD[0],tabIPD[1],tabIPD[2],tabIPD[3])+ espace+"+"\
     +port(args.portSource)+ espace+"+"+port(args.portDest)+ espace+"+"\
     +message(msg)
-
+    f = open('rules.txt','w')
+    f.close()
     with open("rules.txt", "r+") as f:
         lignes = f.readlines()
         for ligne in lignes:
