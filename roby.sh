@@ -55,6 +55,11 @@ fi
 echo "Grafana already install"
 cd ..
 
+if [ -f "/etc/cron.d/logcheck" ]; then
+  echo "Removing logcheck default CRON"
+   rm /etc/cron.d/logcheck
+fi
+
 cd Malilog
 # Update Malilog if needed
 echo "Update Malilog : "
