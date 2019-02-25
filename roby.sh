@@ -62,9 +62,9 @@ git checkout master && git up;
 
 # launch log generation
 if [ ! $# -eq 0 ]; then
-  java -jar malilog.jar -nb $1
+  java -jar malilog.jar -nbar -nb $1
 else
-  java -jar malilog.jar -nb 10
+  java -jar malilog.jar -nbar -nb 10
 fi
 
 if [ ! -d "Logs/logs.log" ]; then
@@ -84,12 +84,17 @@ echo "config logcheck : "
 sudo ./conf.sh
 
 # conf logcheck rules
-echo "clean rules : "
-sudo rm /etc/logcheck/cracking.d/local-rule
+if [ -f "/etc/logcheck/cracking.d/local-rule" ]; then
+  echo "clean rules : "
+  sudo rm /etc/logcheck/cracking.d/local-rule
+fi
 
 echo "add rules : "
-sudo cp /vagrant/rules.txt /etc/logcheck/cracking.d/local-rule
-
+if [ -f "/vagrant/rules.txt" ]; then
+  sudo cp /vagrant/rules.txt /etc/logcheck/cracking.d/local-rule
+else
+  echo "No rules file found, did you run rules.py ?"
+fi
 echo "Run logcheck for the dashboard : "
 sudo -u logcheck logcheck -t -o > /tmp/logcheck-report.txt
 python3 /home/vagrant/grafana-dashboard/alert_to_bdd.py /tmp/logcheck-report.txt
